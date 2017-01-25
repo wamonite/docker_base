@@ -8,7 +8,7 @@ if [[ -z "${version}" ]]
 then
     echo "./push_image <version>"
 
-    ${docker_cmd} images | grep "^${image_name}"
+    ${docker_cmd} images | grep "^${image_name} "
 
 else
     if [[ "${version}" != "latest" ]]
