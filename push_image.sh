@@ -2,6 +2,8 @@
 
 . config.sh
 
+echo "repository: ${DOCKER_REPO:?not set}"
+
 version="${1:-}"
 
 if [[ -z "${version}" ]]
