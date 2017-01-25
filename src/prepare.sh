@@ -1,6 +1,7 @@
 #!/bin/bash -eux
 
-. $(cd $(dirname $0); pwd -P)/env.sh
+script_path=$(cd $(dirname $0); pwd -P)
+. "${script_path}"/env.sh
 
 ## Prevent initramfs updates from trying to run grub and lilo.
 ## https://journal.paul.querna.org/articles/2013/10/15/docker-ubuntu-on-rackspace/

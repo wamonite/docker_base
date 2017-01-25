@@ -1,6 +1,7 @@
 #!/bin/bash -eux
 
-. $(cd $(dirname $0); pwd -P)/env.sh
+script_path=$(cd $(dirname $0); pwd -P)
+. "${script_path}"/env.sh
 
 apt-get install -y --no-install-recommends curl less vim-tiny jq
 

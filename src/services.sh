@@ -1,10 +1,11 @@
 #!/bin/bash -eux
 
-. $(cd $(dirname $0); pwd -P)/env.sh
+script_path=$(cd $(dirname $0); pwd -P)
+. "${script_path}"/env.sh
 
 apt-get install -y --no-install-recommends cron rsyslog logrotate
 
-cp -RTv /tmp/build/s6/ /etc/s6/
+cp -RTv "${script_path}"/etc/ /etc/
 
 # remove useless cron entries
 rm -f /etc/cron.daily/apt-compat
