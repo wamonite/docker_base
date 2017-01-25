@@ -2,7 +2,7 @@
 
 . $(cd $(dirname $0); pwd -P)/env.sh
 
-apt-get install -y --no-install-recommends curl less vim-tiny jq rsyslog logrotate
+apt-get install -y --no-install-recommends curl less vim-tiny jq
 
 s6_overlay_ver=1.19.1.1
 s6_overlay_dest=/tmp/s6-overlay-amd64.tar.gz
