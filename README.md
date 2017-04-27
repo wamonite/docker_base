@@ -14,6 +14,7 @@ And a few extras:-
 * [gosu](https://github.com/tianon/gosu)
 * [jq](https://stedolan.github.io/jq/)
 * [dumb-init](https://github.com/Yelp/dumb-init) (for running without s6)
+* rsync
 
 ## Contact
 
