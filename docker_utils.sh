@@ -12,6 +12,10 @@ script_path=$(cd $(dirname $0); pwd -P)
 repo_name=${DOCKER_REPO:-}
 image_name="${repo_name:+${repo_name}/}${container_name}"
 docker_cmd=${DOCKER_CMD:-docker}
+if [[ ! -z "${DOCKER_HOST:-}" && "${DOCKER_HOST}" =~ ^tcp://(.*):[0-9]*$ ]]
+then
+    container_hostname="${BASH_REMATCH[1]}"
+fi
 
 # for a symlink name <prefix>_<type>.sh echo <type> or nothing
 function get_link_type() {
@@ -26,7 +30,7 @@ function get_link_type() {
 
 # vars may have changed, so echo the latest start arguments
 function get_host_args() {
-    echo "${container_network:+--net ${container_network}} --hostname ${container_name} --name ${container_name}"
+    echo "${container_network:+--net ${container_network}} --hostname ${container_hostname:-${container_name}} --name ${container_name}"
 }
 
 # choose what to do on symlink name
@@ -103,10 +107,14 @@ push_image*)
         if [ "${version}" != "latest" ]
         then
             ${docker_cmd} tag "${image_name}:latest" "${image_name}:${version}"
-            git tag -a "${version}" -m "${image_name}:${version}"
         fi
 
-        exec ${docker_cmd} push "${image_name}:${version}"
+        ${docker_cmd} push "${image_name}:${version}"
+
+        if [ "${version}" != "latest" ]
+        then
+            git tag -a "${version}" -m "${image_name}:${version}"
+        fi
     fi
     ;;
 
