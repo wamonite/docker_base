@@ -16,6 +16,10 @@ And a few extras:-
 * [dumb-init](https://github.com/Yelp/dumb-init) (for running without s6)
 * rsync
 
+## Notes
+
+* s6 copies service directories from `/etc/s6/services` to `/var/run/s6/services` and this path should be used for s6 commands.
+
 ## Contact
 
           @wamonite     - twitter

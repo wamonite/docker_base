@@ -1,14 +1,6 @@
 #!/bin/bash -eux
 
-script_path=$(cd $(dirname $0); pwd -P)
-. "${script_path}"/env.sh
-
-## Prevent initramfs updates from trying to run grub and lilo.
-## https://journal.paul.querna.org/articles/2013/10/15/docker-ubuntu-on-rackspace/
-## http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=594189
-export INITRD=no
-mkdir -p /etc/container_environment
-echo -n no > /etc/container_environment/INITRD
+export DEBIAN_FRONTEND=noninteractive
 
 ## Enable Ubuntu Universe and Multiverse.
 sed -i 's/^#\s*\(deb.*universe\)$/\1/g' /etc/apt/sources.list
@@ -40,5 +32,3 @@ apt-get dist-upgrade -y --no-install-recommends
 apt-get install -y --no-install-recommends language-pack-en
 locale-gen en_GB
 update-locale LANG=en_GB.UTF-8 LC_CTYPE=en_GB.UTF-8
-echo -n en_GB.UTF-8 > /etc/container_environment/LANG
-echo -n en_GB.UTF-8 > /etc/container_environment/LC_CTYPE

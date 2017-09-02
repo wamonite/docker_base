@@ -1,7 +1,8 @@
 #!/bin/bash -eux
 
 script_path=$(cd $(dirname $0); pwd -P)
-. "${script_path}"/env.sh
+
+export DEBIAN_FRONTEND=noninteractive
 
 apt-get install -y --no-install-recommends cron rsyslog logrotate
 
