@@ -1,3 +1,11 @@
-#!/bin/sh
+#!/usr/bin/execlineb -P
 
-exec tail -F -n 0 /var/log/syslog
+trap
+{
+  term
+  {
+    foreground { s6-svwait -D /var/run/s6/services/rsyslog }
+    importas -u ! ! kill ${!}
+  }
+}
+tail -F -n 0 /var/log/syslog
