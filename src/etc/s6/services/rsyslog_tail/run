@@ -4,7 +4,11 @@ trap
 {
   term
   {
-    foreground { s6-svwait -D /var/run/s6/services/rsyslog }
+    foreground {
+        loopwhilex -x 0
+        foreground { s6-sleep 1 }
+        pipeline { tail -n 100 /var/log/syslog } redirfd -w 1 /dev/null grep "rsyslogd:.*exiting on"
+    }
     importas -u ! ! kill ${!}
   }
 }
