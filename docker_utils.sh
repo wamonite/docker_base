@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-# 2017-09-05 12:22
+# 2017-09-29 18:07
 
 script_path=$(cd $(dirname $0); pwd -P)
 
@@ -9,12 +9,8 @@ script_path=$(cd $(dirname $0); pwd -P)
 # check for src dir
 [[ ! -d "${script_path}/src" ]] && { echo "src directory not found" 1>&2 ; exit 1 ; }
 
-# docker_cmd and container_hostname
+# docker_cmd
 docker_cmd=${DOCKER_CMD:-docker}
-if [[ ! -z "${DOCKER_HOST:-}" && "${DOCKER_HOST}" =~ ^tcp://(.*):[0-9]*$ ]]
-then
-    container_hostname="${BASH_REMATCH[1]}"
-fi
 
 # for a symlink name <prefix>_<type>.sh echo <type> or nothing
 function get_link_type() {
@@ -78,12 +74,13 @@ build_image*)
 
 start_container*)
     link_type=$(get_link_type "start_container" "${script_name}")
+    container_name_init="${container_name:-}"
     container_name=$(get_container_name "${link_type}")
     image_name=$(get_image_name "${container_name}")
 
     if [[ ! -z "${link_type}" ]]
     then
-        container_name="${container_name}_${link_type}"
+        [[ "${container_name_init}" == "${container_name}" ]] && container_name="${container_name}_${link_type}"
 
         docker_args_name="docker_args_${link_type}"
         [[ ! -z "${!docker_args_name:-}" ]] && docker_args="${!docker_args_name}"
@@ -111,17 +108,21 @@ start_container*)
 
 stop_container*)
     link_type=$(get_link_type "stop_container" "${script_name}")
+    container_name_init="${container_name:-}"
     container_name=$(get_container_name "${link_type}")
     image_name=$(get_image_name "${container_name}")
 
     if [[ ! -z "${link_type}" ]]
     then
-        container_name="${container_name}_${link_type}"
+        [[ "${container_name_init}" == "${container_name}" ]] && container_name="${container_name}_${link_type}"
+
+        docker_stop_timeout_name="docker_stop_timeouts_${link_type}"
+        [[ ! -z "${!docker_stop_timeout_name:-}" ]] && docker_stop_timeout="${!docker_stop_timeout_name}"
     fi
 
     echo "#### STOP ${container_name}"
     set +e
-    ${docker_cmd} stop "${container_name}"
+    ${docker_cmd} stop ${docker_stop_timeout:+--time ${docker_stop_timeout}} "${container_name}"
     ${docker_cmd} logs --tail 100 "${container_name}"
     ${docker_cmd} rm -v "${container_name}"
     set -e
@@ -129,12 +130,13 @@ stop_container*)
 
 tail_logs*)
     link_type=$(get_link_type "tail_logs" "${script_name}")
+    container_name_init="${container_name:-}"
     container_name=$(get_container_name "${link_type}")
     image_name=$(get_image_name "${container_name}")
 
     if [[ ! -z "${link_type}" ]]
     then
-        container_name="${container_name}_${link_type}"
+        [[ "${container_name_init}" == "${container_name}" ]] && container_name="${container_name}_${link_type}"
     fi
 
     echo "#### TAIL ${container_name}"
@@ -166,6 +168,22 @@ push_image*)
         then
             git tag -a "${version}" -m "${image_name}:${version}"
         fi
+    fi
+    ;;
+
+list_remote_tags*)
+    link_type=$(get_link_type "list_remote_tags" "${script_name}")
+    container_name=$(get_container_name "${link_type}")
+    image_name=$(get_image_name "${container_name}")
+
+    echo '#### LIST REMOTE TAGS'
+
+    if [[ "${DOCKER_REPO:-}" =~ ^[0-9]*\.dkr\.ecr\.[^\.]*\.amazonaws\.com\/*(.*)$ ]]
+    then
+        image_info=$(aws ecr describe-images --repository-name "${BASH_REMATCH[1]:+${BASH_REMATCH[1]}/}${container_name}" | jq '.imageDetails[] | select (.imageTags != null) | .imageTags[]' | sort)
+        echo "${image_info}"
+    else
+        echo "Unknown repository: ${DOCKER_REPO:-}"
     fi
     ;;
 
