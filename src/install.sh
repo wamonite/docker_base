@@ -44,7 +44,7 @@ update-locale LANG=${BASE_LANGUAGE} LC_CTYPE=${BASE_LANGUAGE}
 ######## INSTALL
 
 # extra packages
-apt-get install -y --no-install-recommends curl less vim-tiny jq rsync
+apt-get install -y --no-install-recommends curl less vim-tiny jq rsync vim
 
 build_arch=$(dpkg --print-architecture)
 
