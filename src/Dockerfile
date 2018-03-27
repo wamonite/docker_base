@@ -13,6 +13,7 @@ ENV INITRD=no
 RUN /tmp/build/install.sh
 
 ADD etc /etc
+ADD root /root
 
 ENV \
     LANG=en_GB.UTF-8 \
