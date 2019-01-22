@@ -1,5 +1,9 @@
-FROM ubuntu:16.04
-MAINTAINER Warren Moore <warren@wamonite.com>
+# ubuntu:16.04 https://hub.docker.com/_/ubuntu
+FROM ubuntu:xenial-20181218
+LABEL maintainer="Warren Moore <warren@wamonite.com>"
+
+ARG INSTALL_LANG=en_GB.UTF-8
+ARG INSTALL_LANGUAGE=en_GB:en
 
 # based on https://github.com/just-containers/base-without-s6
 
@@ -12,12 +16,11 @@ ENV INITRD=no
 
 RUN /tmp/build/install.sh
 
-ADD etc /etc
-ADD root /root
+ADD fs /
 
+# locale environment vars are usually set by PAM, but needs to be provided by env var for Docker
 ENV \
-    LANG=en_GB.UTF-8 \
-    LANGUAGE=en_GB:en \
-    LC_CTYPE=en_GB.UTF-8
+    LANG=${INSTALL_LANG} \
+    LANGUAGE=${INSTALL_LANGUAGE}
 
 ENTRYPOINT ["/init"]

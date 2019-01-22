@@ -1,17 +1,16 @@
 #!/bin/bash -eux
 
 export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
 
-BASE_LOCALE=en_GB
-BASE_LANGUAGE=en_GB.UTF-8
-S6_VERSION=1.21.4.0
-DUMBINIT_VERSION=1.2.1
-DUMBINIT_CHECKSUM=057ecd4ac1d3c3be31f82fc0848bf77b1326a975b4f8423fe31607205a0fe945
-GOSU_VERSION=1.10
+S6_VERSION=1.21.7.0
+DUMBINIT_VERSION=1.2.2
+DUMBINIT_CHECKSUM=37f2c1f0372a45554f1b89924fbb134fc24c3756efaedf11e07f599494e0eff9
+GOSU_VERSION=1.11
 
 ######## PREPARE
 
-# Enable Ubuntu Universe and Multiverse.
+# Enable Ubuntu Universe and Multiverse
 sed -i 's/^#\s*\(deb.*universe\)$/\1/g' /etc/apt/sources.list
 sed -i 's/^#\s*\(deb.*multiverse\)$/\1/g' /etc/apt/sources.list
 apt-get update
@@ -27,19 +26,16 @@ ln -sf /bin/true /sbin/initctl
 dpkg-divert --local --rename --add /usr/bin/ischroot
 ln -sf /bin/true /usr/bin/ischroot
 
-# Install HTTPS support for APT.
+# Install HTTPS support for APT
 apt-get install -y --no-install-recommends apt-transport-https ca-certificates
 
 # Install add-apt-repository
 apt-get install -y --no-install-recommends software-properties-common
 
-# Upgrade all packages.
-apt-get dist-upgrade -y --no-install-recommends
-
-# Fix locale.
-apt-get install -y --no-install-recommends language-pack-en
-locale-gen ${BASE_LOCALE}
-update-locale LANG=${BASE_LANGUAGE} LC_CTYPE=${BASE_LANGUAGE}
+# Fix locale
+apt-get install -y --no-install-recommends locales
+locale-gen ${INSTALL_LANG}
+update-locale LANG=${INSTALL_LANG} LANGUAGE=${INSTALL_LANGUAGE}
 
 ######## INSTALL
 

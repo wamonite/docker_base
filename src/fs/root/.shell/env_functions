@@ -12,9 +12,11 @@ pathremove () {
     local dir
     local var=${2:-PATH}
     # Bash has ${!var}, but this is not portable.
-    for dir in `indirect_expand "$var"`; do
+    for dir in `indirect_expand "$var"`
+    do
         IFS=''
-        if [ "$dir" != "$1" ]; then
+        if [ "$dir" != "$1" ]
+        then
             newpath=$newpath:$dir
         fi
     done
@@ -47,7 +49,8 @@ pathappend () {
 
 # Usage: ssource filename
 ssource () {
-    if [ -r "$1" ]; then
+    if [ -r "$1" ]
+    then
         . "$1"
     fi
 }

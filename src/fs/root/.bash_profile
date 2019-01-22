@@ -9,7 +9,8 @@ BASH_ENV=
 . ~/.bash/login
 
 # run ~/.bash/interactive if this is an interactive shell.
-if [ "$PS1" ]; then
+if [ "$PS1" ]
+then
     . ~/.bash/interactive
 fi
 
