@@ -39,6 +39,15 @@ update-locale LANG=${INSTALL_LANG} LANGUAGE=${INSTALL_LANGUAGE}
 
 ######## INSTALL
 
+# gpg-agent required for gpg --import, dirmngr required for gpg --recv-keys
+if [[ "${IMAGE_BASE}" == *bionic* ]]
+then
+    apt-get install -y --no-install-recommends gpg-agent dirmngr
+    mkdir -p /root/.gnupg
+    # https://github.com/inversepath/usbarmory-debian-base_image/issues/9
+    echo "disable-ipv6" >> /root/.gnupg/dirmngr.conf
+fi
+
 # extra packages
 apt-get install -y --no-install-recommends curl less vim-tiny jq rsync vim
 
@@ -54,10 +63,13 @@ gpg --verify "${s6_overlay_sig}" "${s6_overlay_dest}"
 tar -xzvf "${s6_overlay_dest}" -C /
 
 # dumb-init
-dumbinit_dest=/usr/local/bin/dumb-init
-curl -SLo "${dumbinit_dest}" https://github.com/Yelp/dumb-init/releases/download/v${DUMBINIT_VERSION}/dumb-init_${DUMBINIT_VERSION}_${build_arch}
-echo "${DUMBINIT_CHECKSUM} ${dumbinit_dest}" | sha256sum -c -
-chmod 755 "${dumbinit_dest}"
+if [[ "${build_arch}" == "amd64" ]]
+then
+    dumbinit_dest=/usr/local/bin/dumb-init
+    curl -SLo "${dumbinit_dest}" https://github.com/Yelp/dumb-init/releases/download/v${DUMBINIT_VERSION}/dumb-init_${DUMBINIT_VERSION}_${build_arch}
+    echo "${DUMBINIT_CHECKSUM} ${dumbinit_dest}" | sha256sum -c -
+    chmod 755 "${dumbinit_dest}"
+fi
 
 # gosu
 gosu_dest=/usr/local/bin/gosu
