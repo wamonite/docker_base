@@ -2,7 +2,7 @@
 
 ## Info
 
-A minimal Docker Ubuntu 16.04/18.04 amd64 and 16.04 amrhf base image based on [Phusion baseimage](https://github.com/phusion/baseimage-docker) but with:-
+A minimal Docker Ubuntu 16.04/18.04 amd64 and 16.04 armhf base image (initially based on [Phusion](https://github.com/phusion/baseimage-docker)) but with:-
 
 * [s6](http://skarnet.org/software/s6/) (via [s6-overlay](https://github.com/just-containers/s6-overlay)) instead of [runit](http://smarden.org/runit/)
 * [rsyslog](http://www.rsyslog.com/) instead of [syslog-ng](https://syslog-ng.org/)
@@ -13,7 +13,7 @@ And a few extras:-
 * logrotate
 * [gosu](https://github.com/tianon/gosu)
 * [jq](https://stedolan.github.io/jq/)
-* [dumb-init](https://github.com/Yelp/dumb-init) (for running without s6)
+* [dumb-init](https://github.com/Yelp/dumb-init) (for running without s6, although not on armhf)
 * rsync
 
 ## Notes
