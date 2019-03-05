@@ -1,6 +1,10 @@
-# ubuntu:16.04 https://hub.docker.com/_/ubuntu
-FROM ubuntu:xenial-20181218
-LABEL maintainer="Warren Moore <warren@wamonite.com>"
+ARG IMAGE_BASE
+
+FROM ${IMAGE_BASE}
+LABEL maintainer="Warren Moore <warren.moore@spatialbuzz.com>"
+
+# needs to be repeated as also used in install.sh
+ARG IMAGE_BASE
 
 ARG INSTALL_LANG=en_GB.UTF-8
 ARG INSTALL_LANGUAGE=en_GB:en
