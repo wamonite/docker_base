@@ -22,6 +22,9 @@ RUN /tmp/build/install.sh
 
 ADD fs /
 
+# copy dotfiles from /etc/skel/
+RUN rsync -av /etc/skel/ /root/
+
 # locale environment vars are usually set by PAM, but needs to be provided by env var for Docker
 ENV \
     LANG=${INSTALL_LANG} \
