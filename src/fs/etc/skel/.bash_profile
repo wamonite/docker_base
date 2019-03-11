@@ -13,4 +13,3 @@ if [ "$PS1" ]
 then
     . ~/.bash/interactive
 fi
-
