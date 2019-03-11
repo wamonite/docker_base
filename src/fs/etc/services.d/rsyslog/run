@@ -1,4 +1,21 @@
 #!/usr/bin/execlineb -P
 
-foreground { rm -f /var/run/rsyslogd.pid }
+## on SIGTERM wait for cron (-x to allow other signals through)
+#trap -x
+#{
+#    term
+#    {
+#        foreground {
+#            # just waiting for cron won't receive any late messages, as cron does no wait for child processes.
+#            # do we need to scan /var/run/s6/services here and wait for all services to be down?
+#            s6-svwait -D /var/run/s6/services/cron
+#        }
+#        importas -u ! ! kill ${!}
+#    }
+#}
+
+foreground {
+    # TODO add check to see if process is running before removing?
+    rm -f /var/run/rsyslogd.pid
+}
 /usr/sbin/rsyslogd -n -i /var/run/rsyslogd.pid

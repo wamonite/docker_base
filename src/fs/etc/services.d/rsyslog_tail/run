@@ -1,15 +1,28 @@
 #!/usr/bin/execlineb -P
 
-trap
+# on SIGTERM wait for rsyslog (-x to allow other signals through)
+trap -x
 {
-  term
-  {
-    foreground {
-        loopwhilex -x 0
-        foreground { s6-sleep 1 }
-        pipeline { tail -n 100 /var/log/syslog } redirfd -w 1 /dev/null grep "rsyslogd:.*exiting on"
+    term
+    {
+        foreground {
+            s6-svwait -D /var/run/s6/services/rsyslog
+        }
+#        foreground {
+#            # this was changed from s6-svwait -D /var/run/s6/services/rsyslog to grep, but unsure why.
+#            # could mean container does not stop and needs to be killed if rsyslog stopped, logrotated
+#            # and S6_KILL_FINISH_MAXTIME disabled
+#            loopwhilex -x 0
+#            foreground {
+#                s6-sleep 1
+#            }
+#            pipeline {
+#                tail -n 100 /var/log/syslog
+#            }
+#            redirfd -w 1 /dev/null grep "rsyslogd:.*exiting on"
+#        }
+        importas -u ! ! kill ${!}
     }
-    importas -u ! ! kill ${!}
-  }
 }
+
 tail -F -n 0 /var/log/syslog
