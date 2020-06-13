@@ -40,7 +40,7 @@ update-locale LANG=${INSTALL_LANG} LANGUAGE=${INSTALL_LANGUAGE}
 ######## INSTALL
 
 # gpg-agent required for gpg --import, dirmngr required for gpg --recv-keys
-if [[ "${IMAGE_BASE}" == *bionic* ]]
+if [[ "${IMAGE_BASE}" != *xenial* ]]
 then
     apt-get install -y --no-install-recommends gpg-agent dirmngr
     mkdir -p /root/.gnupg
@@ -60,7 +60,14 @@ curl -SLo "${s6_overlay_dest}" https://github.com/just-containers/s6-overlay/rel
 curl -SLo "${s6_overlay_sig}" https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-${build_arch}.tar.gz.sig
 curl https://keybase.io/justcontainers/key.asc | gpg --import
 gpg --verify "${s6_overlay_sig}" "${s6_overlay_dest}"
-tar -xzvf "${s6_overlay_dest}" -C /
+if [[ "${IMAGE_BASE}" == *focal* ]]
+then
+    # split across two tar commands as explained in https://github.com/just-containers/s6-overlay#bin-and-sbin-are-symlinks
+    tar -xzvf "${s6_overlay_dest}" -C / --exclude='./bin'
+    tar -xzvf "${s6_overlay_dest}" -C /usr ./bin
+else
+    tar -xzvf "${s6_overlay_dest}" -C /
+fi
 
 # dumb-init
 if [[ "${build_arch}" == "amd64" ]]
@@ -97,6 +104,6 @@ rm -f /etc/logrotate.d/dpkg
 ######## CLEAN
 
 apt-get clean
-rm -rf ~/.gnupg
+rm -rf /root/.gnupg
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 rm -rf /var/log/apt/* /var/log/dpkg.log /var/log/alternatives.log /var/log/bootstrap.log /var/log/dmesg
