@@ -11,7 +11,7 @@ ARG INSTALL_LANGUAGE=en_GB:en
 
 # based on https://github.com/just-containers/base-without-s6
 
-ADD install.sh /tmp/build/
+COPY install.sh /tmp/build/
 
 # prevent initramfs updates from trying to run grub and lilo.
 # https://journal.paul.querna.org/articles/2013/10/15/docker-ubuntu-on-rackspace/
@@ -20,7 +20,7 @@ ENV INITRD=no
 
 RUN /tmp/build/install.sh
 
-ADD fs /
+COPY fs /
 
 # copy dotfiles from /etc/skel/
 RUN rsync -av /etc/skel/ /root/
