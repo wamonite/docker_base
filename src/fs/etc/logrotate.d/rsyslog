@@ -7,8 +7,8 @@
     delaycompress
     compress
     postrotate
-        s6-svc -h /var/run/s6/services/rsyslog > /dev/null
-        s6-svc -t /var/run/s6/services/rsyslog_tail > /dev/null
+        s6-svc -h /var/run/s6/services/rsyslog > /dev/null || true
+        s6-svc -t /var/run/s6/services/rsyslog_tail > /dev/null || true
     endscript
 }
 
@@ -33,7 +33,7 @@
     delaycompress
     sharedscripts
     postrotate
-        s6-svc -h /var/run/s6/services/rsyslog > /dev/null
-        s6-svc -t /var/run/s6/services/rsyslog_tail > /dev/null
+        s6-svc -h /var/run/s6/services/rsyslog > /dev/null || true
+        s6-svc -t /var/run/s6/services/rsyslog_tail > /dev/null || true
     endscript
 }
