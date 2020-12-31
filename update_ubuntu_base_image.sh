@@ -11,4 +11,4 @@ sed -i '' \
     -e "s/^docker_image_1604=.*$/docker_image_1604=\"${docker_image_1604}\"/" \
     -e "s/^docker_image_1804=.*$/docker_image_1804=\"${docker_image_1804}\"/" \
     -e "s/^docker_image_2004=.*$/docker_image_2004=\"${docker_image_2004}\"/" \
-    config.sh
+    build_vars.sh
